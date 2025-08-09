@@ -45,11 +45,16 @@ This is a BigCommerce Catalyst storefront - a Next.js-based headless commerce fr
 
 ## Environment Setup
 
-To connect to a BigCommerce store, you'll need:
-- Store hash
-- GraphQL Storefront API token
-- Channel ID
-- Customer login API credentials (optional)
+✅ **BigCommerce Connection Configured** - Store successfully connected!
+
+Required environment variables (stored in `.env.local`):
+- `BIGCOMMERCE_STORE_HASH` - Store identifier
+- `BIGCOMMERCE_STOREFRONT_TOKEN` - JWT token for GraphQL API access
+- `BIGCOMMERCE_CHANNEL_ID` - Channel identifier (typically 1)
+- `NEXTAUTH_SECRET` - Authentication secret
+- `NEXTAUTH_URL` - Application URL
+
+Note: Customer login API credentials are optional for basic storefront functionality.
 
 ## Key Features
 
