@@ -1,0 +1,57 @@
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install pnpm
+        run: corepack prepare pnpm@latest --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Deploy to Vercel (Preview)
+        if: github.event_name == 'pull_request'
+        uses: vercel/action@v1
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        env:
+          BIGCOMMERCE_STORE_HASH: ${{ secrets.BIGCOMMERCE_STORE_HASH }}
+          BIGCOMMERCE_STOREFRONT_TOKEN: ${{ secrets.BIGCOMMERCE_STOREFRONT_TOKEN }}
+          BIGCOMMERCE_CHANNEL_ID: ${{ secrets.BIGCOMMERCE_CHANNEL_ID }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+
+      - name: Deploy to Vercel (Production)
+        if: github.ref == 'refs/heads/main'
+        uses: vercel/action@v1
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+        env:
+          BIGCOMMERCE_STORE_HASH: ${{ secrets.BIGCOMMERCE_STORE_HASH }}
+          BIGCOMMERCE_STOREFRONT_TOKEN: ${{ secrets.BIGCOMMERCE_STOREFRONT_TOKEN }}
+          BIGCOMMERCE_CHANNEL_ID: ${{ secrets.BIGCOMMERCE_CHANNEL_ID }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL_PRODUCTION }}
