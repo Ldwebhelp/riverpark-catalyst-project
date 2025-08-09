@@ -1,17 +1,20 @@
-import { composeMiddlewares } from './middlewares/compose-middlewares';
-import { withAnalyticsCookies } from './middlewares/with-analytics-cookies';
-import { withAuth } from './middlewares/with-auth';
-import { withChannelId } from './middlewares/with-channel-id';
-import { withIntl } from './middlewares/with-intl';
-import { withRoutes } from './middlewares/with-routes';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-export const middleware = composeMiddlewares(
-  withAuth,
-  withIntl,
-  withAnalyticsCookies,
-  withChannelId,
-  withRoutes,
-);
+// Temporary simplified middleware to get site working
+// TODO: Restore full middleware once debugging is complete
+export function middleware(request: NextRequest) {
+  // Set basic headers that the app expects
+  const response = NextResponse.next();
+  
+  // Set channel ID header (required by the app)
+  response.headers.set('x-bc-channel-id', process.env.BIGCOMMERCE_CHANNEL_ID || '1');
+  
+  // Set basic locale header
+  response.headers.set('x-bc-locale', 'en');
+  
+  return response;
+}
 
 export const config = {
   matcher: [
@@ -20,7 +23,7 @@ export const config = {
      * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
-     * - _vercel (vercel internals, eg: web vitals)
+     * - _vercel (vercel internals)
      * - favicon.ico (favicon file)
      * - admin (admin panel)
      * - sitemap.xml (sitemap route)
